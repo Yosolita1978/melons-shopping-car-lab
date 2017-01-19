@@ -7,7 +7,7 @@ Authors: Joel Burton, Christian Fernandez, Meggie Mahnken, Katie Byers.
 """
 
 
-from flask import Flask, render_template, redirect, flash
+from flask import Flask, render_template, redirect, flash, session
 import jinja2
 
 import melons
@@ -17,7 +17,7 @@ app = Flask(__name__)
 
 # A secret key is needed to use Flask sessioning features
 
-app.secret_key = 'this-should-be-something-unguessable'
+app.secret_key = 'dkfjasdkfjdskfjasj'
 
 # Normally, if you refer to an undefined variable in a Jinja template,
 # Jinja silently ignores this. This makes debugging difficult, so we'll
@@ -77,6 +77,9 @@ def show_shopping_cart():
     #
     # Make sure your function can also handle the case wherein no cart has
     # been added to the session
+    session["cart"] = {}
+
+    print session["cart"]
 
     return render_template("cart.html")
 
@@ -100,7 +103,20 @@ def add_to_cart(melon_id):
     # - flash a success message
     # - redirect the user to the cart page
 
-    return "Oops! This needs to be implemented!"
+    count = 0
+
+    if session["cart"]:
+        session["cart"] = melon_id
+        session[melon_id] = count
+    
+    else:
+        session[melon_id] += 1
+        
+
+        flash("success")
+
+
+    return redirect("/cart.html")
 
 
 @app.route("/login", methods=["GET"])
